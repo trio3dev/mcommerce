@@ -13,10 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -40,9 +39,9 @@ public class ClientController {
      * On fini par rentourner la page Accueil.html à laquelle on passe la liste d'objets "produits" récupérés.
      * */
     @RequestMapping("/")
-    public String accueil(Model model){
+    public String accueil(Model model) {
         
-        List<ProductBean> produits =  ProduitsProxy.listeDesProduits();
+        List<ProductBean> produits = ProduitsProxy.listeDesProduits();
         
         model.addAttribute("produits", produits);
         
@@ -55,7 +54,7 @@ public class ClientController {
      * On passe l'objet "produit" récupéré et qui contient les détails en question à  FicheProduit.html
      * */
     @RequestMapping("/details-produit/{id}")
-    public String ficheProduit(@PathVariable int id,  Model model){
+    public String ficheProduit(@PathVariable int id, Model model) {
         
         ProductBean produit = ProduitsProxy.recupererUnProduit(id);
         
@@ -69,7 +68,7 @@ public class ClientController {
      * Opération qui fait appel au microservice de commande pour placer une commande et récupérer les détails de la commande créée
      * */
     @RequestMapping(value = "/commander-produit/{idProduit}/{montant}")
-    public String passerCommande(@PathVariable int idProduit, @PathVariable Double montant,  Model model){
+    public String passerCommande(@PathVariable int idProduit, @PathVariable Double montant, Model model) {
         
         
         CommandeBean commande = new CommandeBean();
@@ -94,7 +93,7 @@ public class ClientController {
      * Opération qui fait appel au microservice de paiement pour traiter un paiement
      * */
     @RequestMapping(value = "/payer-commande/{idCommande}/{montantCommande}")
-    public String payerCommande(@PathVariable int idCommande, @PathVariable Double montantCommande, Model model){
+    public String payerCommande(@PathVariable int idCommande, @PathVariable Double montantCommande, Model model) {
         
         PaiementBean paiementAExcecuter = new PaiementBean();
         
@@ -108,7 +107,7 @@ public class ClientController {
         
         Boolean paiementAccepte = false;
         //si le code est autre que 201 CREATED, c'est que le paiement n'a pas pu aboutir.
-        if(paiement.getStatusCode() == HttpStatus.CREATED)
+        if (paiement.getStatusCode() == HttpStatus.CREATED)
             paiementAccepte = true;
         
         model.addAttribute("paiementOk", paiementAccepte); // on envoi un Boolean paiementOk à la vue
@@ -119,6 +118,6 @@ public class ClientController {
     //Génére une serie de 16 chiffres au hasard pour simuler vaguement une CB
     private Long numcarte() {
         
-        return ThreadLocalRandom.current().nextLong(1000000000000000L,9000000000000000L );
+        return ThreadLocalRandom.current().nextLong(1000000000000000L, 9000000000000000L);
     }
 }
